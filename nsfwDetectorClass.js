@@ -6,7 +6,7 @@ class NsfwDetector {
             'MALE_GENITALIA_EXPOSED', 'BLOOD_SHED', 'VIOLENCE', 'GORE', 'PORNOGRAPHY', 'DRUGS', 'ALCOHOL',
         ];
         // Load the TensorFlow model once and reuse
-        this._classifierPromise = window.tensorflowPipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32');
+        this._classifierPromise = window.tensorflowPipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32', {"quantized": true});
     }
 
     async isNsfw(imageUrl) {
