@@ -1,6 +1,6 @@
 class NsfwDetector {
     constructor() {
-        this._threshold = 0.35;
+        this._threshold = 0.5;
         this._nsfwLabels = [
             'FEMALE_BREAST_EXPOSED', 'FEMALE_GENITALIA_EXPOSED', 'BUTTOCKS_EXPOSED', 'ANUS_EXPOSED',
             'MALE_GENITALIA_EXPOSED', 'BLOOD_SHED', 'VIOLENCE', 'GORE', 'PORNOGRAPHY', 'DRUGS', 'ALCOHOL',
@@ -32,11 +32,15 @@ class NsfwDetector {
         const img = await this._loadImage(imageUrl);
         const offScreenCanvas = document.createElement('canvas');
         const ctx = offScreenCanvas.getContext('2d');
+
+        // Set the canvas size to the target resolution
         offScreenCanvas.width = 224;
         offScreenCanvas.height = 224;
-    
+
+        // Draw the image onto the canvas at the new size
         ctx.drawImage(img, 0, 0, offScreenCanvas.width, offScreenCanvas.height);
-        
+
+        // Convert the canvas to a Blob and create a Blob URL
         return new Promise((resolve, reject) => {
             offScreenCanvas.toBlob(blob => {
                 if (!blob) {
@@ -52,7 +56,7 @@ class NsfwDetector {
     async _loadImage(url) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            img.crossOrigin = 'anonymous';
+            img.crossOrigin = 'anonymous'; // This is important for loading images from external URLs
             img.onload = () => resolve(img);
             img.onerror = () => reject(`Failed to load image: ${url}`);
             img.src = url;
@@ -62,9 +66,6 @@ class NsfwDetector {
 
 window.NsfwDetector = NsfwDetector;
 
-
-
-window.NsfwDetector = NsfwDetector;
 
 
 
