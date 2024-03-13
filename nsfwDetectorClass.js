@@ -19,7 +19,9 @@ class NsfwDetector {
             const nsfwDetected = output.some(result => result.score > this._threshold);
             return nsfwDetected;
         } catch (error) {
-            console.error('Error during NSFW classification: ', error);
+            if (!error.message.includes("The message port closed before a response was received")) {
+                console.error('Error during NSFW classification: ', error);
+            }
             throw error;
         } finally {
             if (blobUrl) {
@@ -34,9 +36,9 @@ class NsfwDetector {
         const ctx = offScreenCanvas.getContext('2d');
         offScreenCanvas.width = 224;
         offScreenCanvas.height = 224;
-    
+
         ctx.drawImage(img, 0, 0, offScreenCanvas.width, offScreenCanvas.height);
-        
+
         return new Promise((resolve, reject) => {
             offScreenCanvas.toBlob(blob => {
                 if (!blob) {
@@ -61,5 +63,6 @@ class NsfwDetector {
 }
 
 window.NsfwDetector = NsfwDetector;
+
 
 
