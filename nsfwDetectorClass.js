@@ -2,26 +2,18 @@ class NsfwDetector {
     constructor() {
         this._threshold = 0.5;
         this._nsfwLabels = [
-            'FEMALE_BREAST_EXPOSED',
-            'FEMALE_GENITALIA_EXPOSED',
-            'BUTTOCKS_EXPOSED',
-            'ANUS_EXPOSED',
-            'MALE_GENITALIA_EXPOSED',
-            'BLOOD_SHED',
-            'VIOLENCE',
-            'GORE',
-            'PORNOGRAPHY',
-            'DRUGS',
-            'ALCOHOL',
+            'FEMALE_BREAST_EXPOSED', 'FEMALE_GENITALIA_EXPOSED', 'BUTTOCKS_EXPOSED', 'ANUS_EXPOSED',
+            'MALE_GENITALIA_EXPOSED', 'BLOOD_SHED', 'VIOLENCE', 'GORE', 'PORNOGRAPHY', 'DRUGS', 'ALCOHOL',
         ];
+        // Load the TensorFlow model once and reuse
+        this._classifierPromise = window.tensorflowPipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32');
     }
 
     async isNsfw(imageUrl) {
         let blobUrl = '';
         try {
-            // Load and resize the image first
             blobUrl = await this._loadAndResizeImage(imageUrl);
-            const classifier = await window.tensorflowPipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32');
+            const classifier = await this._classifierPromise; // Use the preloaded model
             const output = await classifier(blobUrl, this._nsfwLabels);
             console.log(output);
             const nsfwDetected = output.some(result => result.score > this._threshold);
@@ -31,7 +23,7 @@ class NsfwDetector {
             throw error;
         } finally {
             if (blobUrl) {
-                URL.revokeObjectURL(blobUrl); // Ensure blob URLs are revoked after use to free up memory
+                URL.revokeObjectURL(blobUrl); // Free up memory
             }
         }
     }
