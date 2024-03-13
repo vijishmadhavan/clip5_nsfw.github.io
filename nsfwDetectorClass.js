@@ -1,6 +1,6 @@
 class NsfwDetector {
     constructor() {
-        this._threshold = 0.5;
+        this._threshold = 0.35;
         this._nsfwLabels = [
             'FEMALE_BREAST_EXPOSED', 'FEMALE_GENITALIA_EXPOSED', 'BUTTOCKS_EXPOSED', 'ANUS_EXPOSED',
             'MALE_GENITALIA_EXPOSED', 'BLOOD_SHED', 'VIOLENCE', 'GORE', 'PORNOGRAPHY', 'DRUGS', 'ALCOHOL',
@@ -19,7 +19,7 @@ class NsfwDetector {
             const nsfwDetected = output.some(result => result.score > this._threshold);
             return nsfwDetected;
         } catch (error) {
-            if (!error.message.includes("The message port closed before a response was received")) {
+            if (!error.message.includes("Unchecked runtime.lastError: The message port closed before a response was received")) {
                 console.error('Error during NSFW classification: ', error);
             }
             throw error;
